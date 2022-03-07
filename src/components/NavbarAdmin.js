@@ -5,7 +5,10 @@ function NavbarAdmin() {
         <>
             <div className="container">
                 <nav className="navbar navbar-expand-sm narbar-light">
-                    <Link className="navbar-brand" to='/'>Shopiify</Link>
+                    <Link className="navbar-brand" to='/'>
+                    <img src='/shopiify_icon.png' alt='icon' style={{width:'50px'}}/>
+                    Shopiify
+                    </Link>
                         <ul className="navbar-nav ms-auto text-left">
                             <li>
                             <Link className="nav-link" to="/admin/products">My Products</Link>
@@ -17,8 +20,6 @@ function NavbarAdmin() {
                             <Link className="nav-link" to="/user">My Account</Link>
                             </li>
                         </ul>
-
-              
 
                 </nav>
 

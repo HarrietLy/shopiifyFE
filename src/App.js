@@ -11,7 +11,6 @@ import ProductViewPage from './pages/ProductViewPage';
 import BuyerOrderPage from './pages/BuyerOrderPage';
 import CartPage from './pages/CartPage';
 import AccountPage from './pages/AccountPage';
-import ProductEditPage from './pages/ProductEditPage';
 import Footer from './components/Footer';
 import NavbarAdmin from './components/NavbarAdmin';
 import OrderPage from './pages/OrderPage';
@@ -39,7 +38,7 @@ function App() {
         <Route path="/admin/products" element={<AdminProductsPage/>} />
 
         <Route path="/product/:productID" element={<ProductViewPage />} />
-        <Route path="/product/:productID/edit" element={<ProductEditPage />} />
+        {/* <Route path="/product/:productID/edit" element={<ProductEditPage />} /> */}
 
         <Route path='/orders/:orderID' element={<OrderPage/>} />
       </Routes>
