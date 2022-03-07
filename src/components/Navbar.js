@@ -35,7 +35,7 @@ function Navbar() {
                             <Link className="nav-link" to="/user">My Account</Link>
                         </li>
                         <li>
-                            {(currentUser.id) ? <button className='btn btn-light' onClick={handleLogout}>Logout</button>
+                            {(currentUser?.id) ? <button className='btn btn-light' onClick={handleLogout}>Logout</button>
                             :<button className='btn btn-light' onClick= {()=>{navigate('/login')}}>Login</button>}
                         </li>
                     </ul>
