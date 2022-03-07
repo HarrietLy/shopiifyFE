@@ -134,7 +134,7 @@ export default function AdminProductsPage() {
     return (
         <div>
             <h5>Welcome Admin, below are all of your products:</h5>
-            <button onClick={() => { openModal({ name: '', category: '', description: '', image: '', price: '', units: '', stock: '' }) }}>Create New Product</button>
+            <button className="btn btn-primary" onClick={() => { openModal({ name: '', category: '', description: '', image: '', price: '', units: '', stock: '' }) }}>Create New Product</button>
             {modalOn &&
                 <form onSubmit={handleSubmit}>
                     <ul>
@@ -144,7 +144,9 @@ export default function AdminProductsPage() {
                         </li>
                         <li>
                             <label htmlFor='category'>Category</label>
+
                             <select id='category' value={category} onChange={(e) => { setCategory(e.target.value) }} >
+                                <option>Choose a category</option>
                                 {
                                     categories.map((category, i) => {
                                         return (
@@ -202,22 +204,20 @@ export default function AdminProductsPage() {
 
                             <tr key={product.id} style={{ color: (product.status === 'inactive') ? "gray" : 'black' }}>
                                 <td>{product.id}</td>
-                                <Link to={`/products/${product.id}`}>
-                                    <td>{product.name}</td>
-                                </Link>
+                                <td><Link to={`/products/${product.id}`}>{product.name}</Link></td>
                                 <td>{categories?.[product.category - 1].name}</td>
-                                <Link to={`/products/${product.id}`}>
-                                    <td><img src={product.image} style={{ 'width': '40px' }} alt=''></img></td>
-                                </Link>
+                                <td><Link to={`/products/${product.id}`}><img src={product.image} style={{ 'width': '40px' }} alt=''></img></Link></td>
                                 <td>${product.price}</td>
                                 <td>{product.units}</td>
                                 <td>{product.stock}</td>
                                 <td>{dayjs(product.created_time).format('DD-MMM-YYYY')}</td>
                                 <td>{product.status}</td>
                                 <td>
-                                    <button onClick={() => openModal(product)}>Edit</button>
-                                    <button onClick={() => handleDeleteProduct(product)}>Delete</button>
-                                    {(product.status === 'active') ? <button onClick={() => handleDeactivate(product)}>Deactivate</button> : <button onClick={() => handleActivate(product)}>Activate</button>}
+                                    <button className="btn btn-primary" onClick={() => openModal(product)}>Edit</button>
+                                    <button className="btn btn-secondary" onClick={() => handleDeleteProduct(product)}>Delete</button>
+                                    {(product.status === 'active')
+                                        ? <button className="btn btn-info" onClick={() => handleDeactivate(product)}>Deactivate</button>
+                                        : <button className="btn btn-info" onClick={() => handleActivate(product)}>Activate</button>}
                                 </td>
                             </tr>
 

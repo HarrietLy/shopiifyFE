@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import data from "../fakedata/data"
 import AddtoCartBtn from "../components/AddtoCartBtn"
-
+import axios from "axios";
 
 
 const Card = ({ product }) => {
@@ -22,33 +21,39 @@ const Card = ({ product }) => {
                 </div>
             </div>
         </>
-
     );
 }
 
 
 export default function BuyerHomePage() {
 
+    const API = process.env.REACT_APP_API
     const [products, setProducts] = useState([])
-    const [filteredProducts, setFilteredProducts]=useState([])
+    const [filteredProducts, setFilteredProducts] = useState([])
+    const [categories, setCategories] = useState()
     const [searchCat, setSearchCat] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
 
+    const fetchAPI = async () => {
+        const fetchedProducts = await axios.get(`${API}/products/`)
+        const fetchedCategories = await axios.get(`${API}/categories/`)
+        const displayedProducts = fetchedProducts.data.filter(product => product.status === 'active' && product.stock > 0)
+        setProducts(displayedProducts)
+        setFilteredProducts(displayedProducts)
+        console.log('displayedProducts',displayedProducts)
+        setCategories(fetchedCategories.data)
+    }
+
     useEffect(() => {
-        setProducts(data.products.filter(product => product.status === 'active' && product.stock > 0))
-        setFilteredProducts(data.products.filter(product => product.status === 'active' && product.stock > 0))
-        //TODO: get all products from database and setProducts, filter for active product and stock>0
+        fetchAPI()
     }, [])
-
-
-    console.log('products', products)
-    console.log('filteredProducts', filteredProducts)
 
     const handleSearch = (searchCat, searchQuery) => {
         console.log('searchCat', searchCat)
         console.log('searchQuery', searchQuery)
         if (searchCat !== '' && searchCat !== 'All Categories') {
-            const productsFiltedByCat = products.filter(product => product.category_id === searchCat)
+            const productsFiltedByCat = products.filter(product => product.category === parseInt(searchCat))
+            console.log('productsFiltedByCat',productsFiltedByCat)
             setFilteredProducts(productsFiltedByCat.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase())))
         } else {
             console.log('no cat filter')
@@ -59,15 +64,16 @@ export default function BuyerHomePage() {
     return (
         <div>
             <h2> Welcome to Shopiify Buyer Homepage</h2>
-
             <select onChange={(e) => setSearchCat(e.target.value)} value={searchCat}>
                 <option>All Categories</option>
-                <option>Fruits</option>
-                <option>Vegetables</option>
-                <option>Packages</option>
+                {categories?.map((category,i)=>{
+                    return(
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                )})
+                }
             </select>
             <input
-                placeholder="$10 off with 'codingislife' promocode"
+                placeholder="Search Product"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value) }}
             ></input>
@@ -81,6 +87,6 @@ export default function BuyerHomePage() {
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }
