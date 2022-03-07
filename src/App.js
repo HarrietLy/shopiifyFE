@@ -19,9 +19,9 @@ import { useState } from "react";
 function App() {
 
   const [currentUser, setCurrentUser]=useState({role:'admin'})
+  //TODO: add user to the context provider wrapping all routes
   return (
     <div>
-
       {(currentUser.role!=='admin')?
       <Navbar />
       :<NavbarAdmin/>}
@@ -33,12 +33,11 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-
         <Route path="/admin/orders" element={<AdminOrdersPage />} />
         <Route path="/admin/products" element={<AdminProductsPage/>} />
 
-        <Route path="/product/:productID" element={<ProductViewPage />} />
-        {/* <Route path="/product/:productID/edit" element={<ProductEditPage />} /> */}
+        <Route path="/products/:productID" element={<ProductViewPage />} />
+        {/* <Route path="/products/:productID/edit" element={<ProductEditPage />} /> */}
 
         <Route path='/orders/:orderID' element={<OrderPage/>} />
       </Routes>

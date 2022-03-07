@@ -1,9 +1,16 @@
-import { useState, Link, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from 'dayjs'
+import { Link } from "react-router-dom";
 
-const API = 'http://localhost:8000/api/'
+
+
 export default function AdminProductsPage() {
+
+    const API = process.env.REACT_APP_API
+
+    console.log(process.env.REACT_APP_API)
+    console.log(process.env.NODE_ENV)
 
     const [adminProducts, setAdminProducts] = useState([])
     const [categories, setCategories] = useState()
@@ -18,8 +25,8 @@ export default function AdminProductsPage() {
     const [modalOn, setModalOn] = useState(false)
 
     const fetchAPI = async () => {
-        const fetchedProducts = await axios.get(API + 'products/')
-        const fetchedCategories = await axios.get(API + 'categories/')
+        const fetchedProducts = await axios.get(`${API}/products/`)
+        const fetchedCategories = await axios.get(`${API}/categories/`)
         console.log("fetchedProducts", fetchedProducts)
         console.log("fetchedCategories", fetchedCategories)
         setAdminProducts(fetchedProducts.data)
@@ -33,7 +40,7 @@ export default function AdminProductsPage() {
     const handleDeleteProduct = async (product) => {
         console.log('handleDeleteProduct product', product)
         try {
-            await axios.delete(API+`products/${product.id}/`)
+            await axios.delete(`${API}/products/${product.id}/`)
             fetchAPI()
         } catch (error) {
             console.log(error)
@@ -44,19 +51,19 @@ export default function AdminProductsPage() {
     const handleDeactivate = async (product) => {
         console.log('handleDeactivate arg product', product)
         try {
-            const updatedProduct = await axios.put(API+`products/${product.id}/`,{...product,status:'inactive'})
-            console.log('updatedProduct',updatedProduct)
+            const updatedProduct = await axios.put(`${API}/products/${product.id}/`, { ...product, status: 'inactive' })
+            console.log('updatedProduct', updatedProduct)
             fetchAPI()
         } catch (error) {
             console.log(error)
         }
     }
 
-    const handleActivate =async  (product) => {
+    const handleActivate = async (product) => {
         console.log('handleActivate arg product', product)
         try {
-            const updatedProduct = await axios.put(API+`products/${product.id}/`,{...product,status:'active'})
-            console.log('updatedProduct',updatedProduct)
+            const updatedProduct = await axios.put(`${API}/products/${product.id}/`, { ...product, status: 'active' })
+            console.log('updatedProduct', updatedProduct)
             fetchAPI()
         } catch (error) {
             console.log(error)
@@ -90,7 +97,7 @@ export default function AdminProductsPage() {
         console.log('newProduct', newProduct)
         if (!productID) {//post/put to product table, post if product.id is null
             try {
-                const createdProduct = await axios.post(API + 'products/', newProduct)
+                const createdProduct = await axios.post(`${API}/products/`, newProduct)
                 console.log("createdProduct", createdProduct)
                 fetchAPI()
                 handleBack()
@@ -101,7 +108,7 @@ export default function AdminProductsPage() {
         } else {
             try {
                 console.log('productID', productID)
-                const updatedProduct = await axios.put(API + `products/${productID}/`, newProduct)
+                const updatedProduct = await axios.put(`${API}/products/${productID}/`, newProduct)
                 console.log('updatedProduct', updatedProduct)
                 fetchAPI() //refresh product table
                 handleBack()
@@ -109,7 +116,7 @@ export default function AdminProductsPage() {
                 console.log(error)
                 alert(error)
             }
-        } 
+        }
     }
 
     const openModal = (product) => {
@@ -123,7 +130,6 @@ export default function AdminProductsPage() {
         setPrice(product.price)
         setStock(product.stock)
     }
-
 
     return (
         <div>
@@ -178,7 +184,7 @@ export default function AdminProductsPage() {
                 <thead>
                     <tr>
                         <th>Product ID</th>
-                        <th>Product Name</th>
+                        <th>Name</th>
                         <th>Category</th>
                         <th>Image</th>
                         <th>Price</th>
@@ -193,11 +199,16 @@ export default function AdminProductsPage() {
                 <tbody>
                     {adminProducts.map((product) => {
                         return (
-                            <tr key={product.id} style={{color:(product.status==='inactive')?"gray":'black'}}>
+
+                            <tr key={product.id} style={{ color: (product.status === 'inactive') ? "gray" : 'black' }}>
                                 <td>{product.id}</td>
-                                <td>{product.name}</td>
+                                <Link to={`/products/${product.id}`}>
+                                    <td>{product.name}</td>
+                                </Link>
                                 <td>{categories?.[product.category - 1].name}</td>
-                                <td><img src={product.image} style={{ 'width': '40px' }} alt=''></img></td>
+                                <Link to={`/products/${product.id}`}>
+                                    <td><img src={product.image} style={{ 'width': '40px' }} alt=''></img></td>
+                                </Link>
                                 <td>${product.price}</td>
                                 <td>{product.units}</td>
                                 <td>{product.stock}</td>
@@ -209,6 +220,7 @@ export default function AdminProductsPage() {
                                     {(product.status === 'active') ? <button onClick={() => handleDeactivate(product)}>Deactivate</button> : <button onClick={() => handleActivate(product)}>Activate</button>}
                                 </td>
                             </tr>
+
                         )
                     })}
                 </tbody>

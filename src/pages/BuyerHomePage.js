@@ -1,6 +1,3 @@
-//search bar by categories
-//display random 3x10 products that and are active, has >0 stock
-//each card has a add to cart button
 import { useEffect, useState } from "react"
 import data from "../fakedata/data"
 import AddtoCartBtn from "../components/AddtoCartBtn"
