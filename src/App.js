@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Card from "./components/Card"
 import Navbar from './components/Navbar';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -13,29 +12,32 @@ import CartPage from './pages/CartPage';
 import AccountPage from './pages/AccountPage';
 import Footer from './components/Footer';
 import OrderPage from './pages/OrderPage';
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
+import axios from 'axios';
 
 
 export const UserContext = createContext(null)
 
 function App() {
-  
+  const API = process.env.REACT_APP_API
   const [currentUser, setCurrentUser] = useState('')
+  const [cart, setCart] = useState()
+  // const [cartQty, setCartQty] = useState()
 
   return (
     <div>
       <UserContext.Provider value={{ currentUser, setCurrentUser }}>
-        <Navbar />
+        <Navbar setCart={setCart} cart={cart} />
         <Routes>
-          <Route path="/" element={<BuyerHomePage />} />
+          <Route path="/" element={<BuyerHomePage setCart={setCart} cart={cart} />} />
           <Route path="/user" element={<AccountPage />} />
           <Route path="/user/orders" element={<BuyerOrderPage />} />
-          <Route path="/cart" element={<CartPage />} />
+          <Route path="/cart" element={<CartPage cart={cart} setCart={setCart} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
           <Route path="/admin/products" element={<AdminProductsPage />} />
-          <Route path="/products/:productID" element={<ProductViewPage />} />
+          <Route path="/products/:productID" element={<ProductViewPage cart={cart} setCart={setCart} />} />
           <Route path='/orders/:orderID' element={<OrderPage />} />
         </Routes>
       </UserContext.Provider>

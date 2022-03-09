@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
+import { UserContext } from '../App'
 import axios from "axios";
 import dayjs from 'dayjs'
 import { Link } from "react-router-dom";
@@ -8,7 +9,7 @@ import { Link } from "react-router-dom";
 export default function AdminProductsPage() {
 
     const API = process.env.REACT_APP_API
-
+    const { currentUser } = useContext(UserContext)
     console.log(process.env.REACT_APP_API)
     console.log(process.env.NODE_ENV)
 
@@ -34,7 +35,9 @@ export default function AdminProductsPage() {
     }
 
     useEffect(() => {
+        if(currentUser.is_superuser){
         fetchAPI()
+        }
     }, [])
 
     const handleDeleteProduct = async (product) => {
@@ -90,7 +93,7 @@ export default function AdminProductsPage() {
             description: description,
             category: category,
             image: image,
-            price: parseInt(price),
+            price: parseFloat(price),
             stock: parseInt(stock),
             units: units
         }
@@ -199,7 +202,7 @@ export default function AdminProductsPage() {
                 </thead>
 
                 <tbody>
-                    {adminProducts.map((product) => {
+                    {adminProducts?.map((product) => {
                         return (
 
                             <tr key={product.id} style={{ color: (product.status === 'inactive') ? "gray" : 'black' }}>
