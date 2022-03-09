@@ -21,7 +21,7 @@ export default function AddtoCartBtn({ productID, cart, setCart }) {
     }
 
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser?.id) {
             fetchAPI(productID, currentUser)
         }
     }, [])

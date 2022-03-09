@@ -1,10 +1,9 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import AddtoCartBtn from '../components/AddtoCartBtn'
 
-
-
-export default function ProductViewPage() {
+export default function ProductViewPage({cart, setCart}) {
 
   const API = process.env.REACT_APP_API
 
@@ -28,8 +27,11 @@ export default function ProductViewPage() {
   }, [productID])
 
   return (
-    <>
+    <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <img src={product?.image} alt='' style={{ width: '50%' }} />
+      <div>
+      <AddtoCartBtn productID={productID} setCart={setCart} cart={cart}/>
+      </div>
       <ul style={{color:(product?.status!=='active' || product?.stock <=0) ? 'gray':'black'}}>
         <li>Name: {product?.name}</li>
         <li>Description: {product?.description}</li>
@@ -39,7 +41,7 @@ export default function ProductViewPage() {
         <li>Stock: {(product?.status!=='active' || product?.stock <=0) ?'Not Available' : product?.stock}</li>
       </ul>
 
-    </>
+    </div>
 
   )
 }

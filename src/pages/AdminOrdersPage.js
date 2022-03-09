@@ -16,12 +16,16 @@ export default function AdminOrdersPage() {
   const fetchOrders=async()=>{
     const fetchedOrders = await axios.get(`${API}/orders/`)
     console.log('fetchedOrders',fetchedOrders.data)
-    setOrders(fetchedOrders.data)
+    const orderData = fetchedOrders.data
 
-    //TODO: fetch address
-    const fetchedAddress = await axios.get(`${API}/addresses/${currentUser.id}/`)
-   
-    console.log("fetchedAddress",fetchedAddress.data) 
+    for (let i=0;i<orderData?.length;i++){
+    //TODO: fetch address for each
+    let fetchedAddress = await axios.get(`${API}/addresses/${parseInt(orderData?.[i]?.shipping_address)}/`)
+    
+    orderData[i].shipping_address = fetchedAddress.data.shipping_address
+    }
+    console.log("orderData",orderData)
+    setOrders(orderData)
   }
 
 
@@ -32,8 +36,6 @@ export default function AdminOrdersPage() {
   },[currentUser])
 
   const handleShipOut =async(order,i)=>{
-    //TODO: put to orders table
-    console.log('shipout')
     const updateOrder = await axios.put(`${API}/orders/${order.id}/`,{...order,order_status:'delivered'})
     const list = [...orders]
     list[i].order_status=updateOrder.data.order_status
@@ -61,7 +63,7 @@ export default function AdminOrdersPage() {
                 <td><Link to={`/orders/${order.id}`}>{order.id}</Link></td>
                 <td>{order.user}</td>
                 <td>
-                   address
+                   {order.shipping_address}
                 </td>
                 <td>{dayjs(order.order_time).format('YYYY-MMM-DD HH:mm:ss')}</td>
                 <td style={{color:(order.order_status==='pending')?'red':'green'}}>{order.order_status}</td>

@@ -53,6 +53,10 @@ export default function CartPage({ cart, setCart }) {
 
 
   const handleOrder = async () => {
+    if(!addressID){
+      alert("please add a ship to address")
+      return
+    }
     try {
       console.log("addressID", addressID)
       const createdOrder = await axios.post(`${API}/orders/`, { user: currentUser.id, shipping_address: parseInt(addressID) })
@@ -71,6 +75,9 @@ export default function CartPage({ cart, setCart }) {
           console.log('newOrderItem', newOrderItem)
           const createdOrderItem = await axios.post(`${API}/orderitems/${createdOrder.data.id}/`, newOrderItem)
           console.log("createdOrderItem", createdOrderItem)
+
+          //TODO: reduce the stock put to product table
+          
         }
         alert("order created")
         await axios.delete(`${API}/carts/${currentUser.id}/`)
@@ -167,7 +174,7 @@ export default function CartPage({ cart, setCart }) {
               })}
             </select>
           </div>
-          {(!currentUserAddress && <p style={{ color: 'red' }}>please add a shipping address in My Account section</p>)}
+          {( currentUserAddress.length===0 && <p style={{ color: 'red' }}>please add a shipping address in My Account section</p>)}
           <br /><br />
           <button className='btn-sm btn-primary' style={{ float: 'right' }} onClick={handleOrder}>Pay and Place Order</button>
         </div>

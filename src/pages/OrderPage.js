@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../App'
 import dayjs from "dayjs"
@@ -48,6 +48,11 @@ export default function OrderPage() {
     }
   },[currentUser])
 
+  const handleShipOut= async()=>{
+    const updateOrder = await axios.put(`${API}/orders/${orderID}/`,{...order,order_status:'delivered'})
+    setOrder({...order, order_status:'delivered'})
+  }
+
   return (
     <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <h5>Order Details of OrderID {orderID}</h5>
@@ -63,7 +68,7 @@ export default function OrderPage() {
       <div >
         Order Status: <span style={{color:(order?.order_status==='pending')?'red':'green'}}>{order?.order_status}</span>
         {(order?.order_status==='pending' && currentUser.is_superuser)&&
-        <button className="btn=sm btn-info">Ship out</button>
+        <button className="btn=sm btn-info" onClick = {handleShipOut}>Ship out</button>
         }
       </div>
       <div>
@@ -83,7 +88,7 @@ export default function OrderPage() {
         <tbody>
           {orderItemDetails?.map((item,i)=>{return(
             <tr key={i}>
-              <td>{item?.name}</td>
+              <td><Link style={{ textDecoration: 'none' }} to={`/products/${item.product}`}>{item?.name}</Link></td>
               <td><img src={item?.image} alt='' style={{width:'40px'}}/></td>
               <td>{item?.units}</td>
               <td>{item?.price}</td>
