@@ -3,6 +3,7 @@ import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../App'
 import axios from "axios"
 import AddtoCartBtn from "../components/AddtoCartBtn"
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function CartPage({ cart, setCart }) {
 
@@ -12,17 +13,18 @@ export default function CartPage({ cart, setCart }) {
   const [basketVal, setBasketVal] = useState(0)
   const [currentUserAddress, setCurrentUserAddress] = useState()
   const [addressID, setAddressID] = useState()
+  const navigate = useNavigate()
 
   const fetchedAddressDetails = async () => {
     const fetchedAddress = await axios.get(`${API}/addresses/byuser/${currentUser.id}/`)
     setCurrentUserAddress(fetchedAddress.data)
+    setAddressID(fetchedAddress?.data[0]?.id)
   }
 
   const fetchCart = async () => {
     const fetchedCart = await axios.get(`${API}/carts/${currentUser.id}/`)
-    console.log('fetchedCart', fetchedCart.data.length)
     const fetchedCartData = fetchedCart.data
-    for (let i = 0; i < fetchedCartData.length; i++) {
+    for (let i = 0; i < fetchedCartData?.length; i++) {
       let cartItemProductID = fetchedCartData[i].product
       console.log('cartItemProductID', cartItemProductID)
       let fetchedCartItem = await axios.get(`${API}/products/${cartItemProductID}/`)
@@ -52,24 +54,32 @@ export default function CartPage({ cart, setCart }) {
 
   const handleOrder = async () => {
     try {
-      const createdOrder = await axios.post(`${API}/orders/`, { user: currentUser.id, shipping_address: addressID })
+      console.log("addressID", addressID)
+      const createdOrder = await axios.post(`${API}/orders/`, { user: currentUser.id, shipping_address: parseInt(addressID) })
       console.log("createdOrder", createdOrder.data)
       try {
-        for (let cartItem in cartDetails) {
-          const createdOrderItem = await axios.post(`${API}/orderitems/${createdOrder.data.id}`, {
-            product: cartItem.product,
-            quantity: cartItem.quantity,
-            price: cartItem.price,
-            order: createdOrder.data.id
-          })
+        console.log("cartDetails", cartDetails)
+        for (let i = 0; i < cartDetails?.length; i++) {
+          console.log("cartItem", cartDetails[i])
+          let cartItem = cartDetails[i]
+          let newOrderItem = {
+            product: parseInt(cartItem.product),
+            quantity: parseInt(cartItem.quantity),
+            price: parseFloat(cartItem.price),
+            order: parseInt(createdOrder.data.id)
+          }
+          console.log('newOrderItem', newOrderItem)
+          const createdOrderItem = await axios.post(`${API}/orderitems/${createdOrder.data.id}/`, newOrderItem)
           console.log("createdOrderItem", createdOrderItem)
         }
         alert("order created")
+        await axios.delete(`${API}/carts/${currentUser.id}/`)
+        setCart()
+        navigate(`/orders/${createdOrder.data.id}`)
       } catch (error) {
         console.log(error)
         alert('Fail to place order')
       }
-
     } catch (error) {
       console.log(error)
       alert('Fail to place order')
@@ -77,75 +87,91 @@ export default function CartPage({ cart, setCart }) {
   }
 
   return (
-    <div style={{ height: '100vh', maxWidth: "90vw", padding: "15px", margin: "auto" }}>
-
-      <h1>Cart</h1>
-      <table style={{ 'width': "100%" }}>
-        <thead>
-          <tr>
-            <th>Product Name</th>
-            <th>Image</th>
-            <th>Unit Price</th>
-            <th>Units</th>
-            <th>Quantity</th>
-            <th></th>
-            <th></th>
-            <th>Total Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cartDetails?.sort().map((cartItem) => {
-            return (
-              <tr key={cartItem.product}>
-                <td>{cartItem.name}</td>
-                <td><img src={cartItem.image} alt='' style={{ width: '40px' }} /></td>
-                <td>${cartItem.price}</td>
-                <td>{cartItem.units}</td>
-                <td>{cartItem.quantity}</td>
-                <td><AddtoCartBtn productID={cartItem.product} cart={cart} setCart={setCart} /></td>
-                <td><button className='btn-sm btn-secondary' onClick={() => handleRemoveCartItem(cartItem?.product)}>Remove</button></td>
-                <td>{`${cartItem.price} x ${cartItem.quantity} = $${(parseFloat(cartItem.price) * parseInt(cartItem.quantity)).toFixed(2)}`}</td>
+    <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
+      {cartDetails?.length === 0 ? <h2>Your Cart is Empty</h2>
+        :
+        <div>
+          <h2>Here is your Cart:</h2>
+          <table style={{ 'width': "100%" }} className="table" >
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Image</th>
+                <th>Unit Price</th>
+                <th>Units</th>
+                <th>Quantity</th>
+                <th></th>
+                <th></th>
+                <th>Total Value</th>
               </tr>
-            )
-          })
+            </thead>
+            <tbody>
+              {cartDetails?.sort(function (a, b) {
+                const nameA = a.name.toLowerCase()
+                const nameB = b.name.toLowerCase()
+                if (nameA < nameB) { return -1 }
+                if (nameA > nameB) { return 1 }
+                return 0
+              })
+                .map((cartItem) => {
+                  return (
+                    <tr key={cartItem.product}>
+                      <td>
+                        <Link style={{ textDecoration: 'none' }} to={`/products/${cartItem.product}`}>{cartItem.name}
+                        </Link>
+                      </td>
+                      <td><img src={cartItem.image} alt='' style={{ width: '40px' }} /></td>
+                      <td>${cartItem.price}</td>
+                      <td>{cartItem.units}</td>
+                      <td>{cartItem.quantity}</td>
+                      <td><AddtoCartBtn productID={cartItem.product} cart={cart} setCart={setCart} /></td>
+                      <td><button className='btn-sm btn-secondary' onClick={() => handleRemoveCartItem(cartItem?.product)}>Remove</button></td>
+                      <td>{`${cartItem.price} x ${cartItem.quantity} = $${(parseFloat(cartItem.price) * parseInt(cartItem.quantity)).toFixed(2)}`}</td>
+                    </tr>
+                  )
+                })
 
-          }
+              }
 
-        </tbody>
-      </table>
-      <hr />
-      <table style={{ 'width': "100%" }}>
-        <tbody>
-          <tr>
-            <td>Basket Value</td>
-            <td>${basketVal.toFixed(2)}</td>
-          </tr>
-          <tr>
-            <td>Shipping Free (free shipping for orders from $50 and above)</td>
-            <td>${(basketVal >= 50) ? (0).toFixed(2) : 2.99}</td>
-          </tr>
-          <tr>
-            <td><strong>Final Cost To Pay</strong></td>
-            <td><strong>${basketVal >= 50 ? basketVal.toFixed(2) : (basketVal + 2.99).toFixed(2)}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-      <hr />
-      <div>
-        <h3>Shipping To Address</h3>
-        <label htmlFor='address'>Shipping Address: </label>
-        <select name='address' value={addressID} onChange={(e) => { setAddressID(e.target.value) }}>
-          {currentUserAddress?.map((addressObj) => {
-            return (
-              <>
-                <option id={addressObj.id}>{addressObj.shipping_address}</option>
-              </>
-            )
-          })}
-        </select>
-      </div>
-      <br /><br />
-      <button className='btn-sm btn-primary' style={{ float: 'right' }} onClick={handleOrder}>Pay and Place Order</button>
+            </tbody>
+          </table>
+
+          <table style={{ 'width': "100%" }} >
+            <tbody>
+              <tr>
+                <td>Basket Value</td>
+                <td>${basketVal.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td>Shipping Free (free shipping for orders from $50 and above)</td>
+                <td>${(basketVal >= 50) ? (0).toFixed(2) : 2.99}</td>
+              </tr>
+              <tr>
+                <td><strong>Final Cost To Pay</strong></td>
+                <td><strong>${basketVal >= 50 ? basketVal.toFixed(2) : (basketVal + 2.99).toFixed(2)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <div>
+            <h3>Shipping To Address</h3>
+            <label htmlFor='address'>Shipping Address: </label>
+            <select name='address' value={addressID} onChange={(e) => { setAddressID(e.target.value) }}>
+              <option disabled>Please Choose an Address</option>
+              {currentUserAddress?.map((addressObj) => {
+                return (
+                  <>
+                    <option id={addressObj?.id} value={addressObj?.id}>{addressObj.shipping_address}</option>
+                  </>
+                )
+              })}
+            </select>
+          </div>
+          {(!currentUserAddress && <p style={{ color: 'red' }}>please add a shipping address in My Account section</p>)}
+          <br /><br />
+          <button className='btn-sm btn-primary' style={{ float: 'right' }} onClick={handleOrder}>Pay and Place Order</button>
+        </div>
+      }
     </div>
   )
 }

@@ -13,7 +13,7 @@ import AccountPage from './pages/AccountPage';
 import Footer from './components/Footer';
 import OrderPage from './pages/OrderPage';
 import { useState, createContext, useEffect } from "react";
-import axios from 'axios';
+import AdminUsersPage from './pages/AdminUsersPage';
 
 
 export const UserContext = createContext(null)
@@ -36,6 +36,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/products" element={<AdminProductsPage />} />
           <Route path="/products/:productID" element={<ProductViewPage cart={cart} setCart={setCart} />} />
           <Route path='/orders/:orderID' element={<OrderPage />} />

@@ -20,11 +20,11 @@ function Navbar({ cart, setCart, cartQty, setCartQty }) {
         console.log('fetchedCartData in nav', fetchedCart.data)
         // setCartQty(fetchedCart.data?.length)
         setCart(fetchedCart.data)
-        console.log('cart from nav',fetchedCart.data)
+        console.log('cart from nav', fetchedCart.data)
     }
 
     useEffect(() => {
-        if(currentUser?.id){
+        if (currentUser?.id) {
             fetchCart()
         }
     }, [currentUser])
@@ -40,10 +40,15 @@ function Navbar({ cart, setCart, cartQty, setCartQty }) {
                     <ul className="navbar-nav ms-auto text-left">
                         <li>
                             {(currentUser?.is_superuser)
+                                && <Link className="nav-link" to="/admin/users">My Customers</Link>
+                            }
+                        </li>
+                        <li>
+                            {(currentUser?.is_superuser)
                                 ? <Link className="nav-link" to="/admin/products">My Products</Link>
                                 : <Link className="nav-link" to="/cart">
                                     <img src='/cart.png' alt='' style={{ width: "2em" }} />
-                                    {(cart?.length===0)?'': cart?.length}
+                                    {(cart?.length === 0) ? '' : cart?.length}
                                 </Link>
                             }
                         </li>

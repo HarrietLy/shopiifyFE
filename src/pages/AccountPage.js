@@ -73,12 +73,12 @@ export default function AccountPage() {
   }
 
   return (
-    <div style={{ height: '100vh', maxWidth: "90vw", padding: "15px", margin: "auto" }}>
+    <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <ul>
         <li>Username: {currentUser.username}</li>
         <li>Email: {currentUser.email}</li>
         <li>Addresses:
-          <button className='btn-sm btn-warning' onClick={() => { openModal() }}> Add a New Address</button>
+          <button className='btn-sm btn-info' onClick={() => { openModal() }}> Add a New Address</button>
           {modalOn &&
             <>
               <form onSubmit={handleSubmitCreate}>
@@ -95,11 +95,11 @@ export default function AccountPage() {
             return (
               <div key={i}>
                 <li>{addressObj.shipping_address}</li>
-                <button className='btn-sm btn-warning' onClick={() => {
+                <button className='btn-sm btn-info' onClick={() => {
                   openEditModal(addressObj)
                   setEditIndex(i)
                 }}> Edit</button>
-                <button className='btn-sm btn-warning' onClick={()=>handleDelete(addressObj,i)}> Delete</button>
+                <button className='btn-sm btn-info' onClick={()=>handleDelete(addressObj,i)}> Delete</button>
                 {(modalEditOn && i === editIndex) &&
                   <form onSubmit={handleSubmitEdit}>
                     <label htmlFor='address'>Address:</label>

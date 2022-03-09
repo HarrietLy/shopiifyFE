@@ -135,7 +135,7 @@ export default function AdminProductsPage() {
     }
 
     return (
-        <div>
+        <div style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
             <h5>Welcome Admin, below are all of your products:</h5>
             <button className="btn btn-primary" onClick={() => { openModal({ name: '', category: '', description: '', image: '', price: '', units: '', stock: '' }) }}>Create New Product</button>
             {modalOn &&
