@@ -72,12 +72,16 @@ export default function CartPage({ cart, setCart }) {
             price: parseFloat(cartItem.price),
             order: parseInt(createdOrder.data.id)
           }
-          console.log('newOrderItem', newOrderItem)
+          // console.log('newOrderItem', newOrderItem)
           const createdOrderItem = await axios.post(`${API}/orderitems/${createdOrder.data.id}/`, newOrderItem)
           console.log("createdOrderItem", createdOrderItem)
 
           //TODO: reduce the stock put to product table
-          
+          const fetchedItem = await axios.get(`${API}/products/${cartItem.product}/`)
+          const updatedProduct = await axios.put(`${API}/products/${cartItem.product}/`,{
+            ...fetchedItem.data, stock:fetchedItem.data.stock-parseInt(cartItem.quantity)
+          })
+
         }
         alert("order created")
         await axios.delete(`${API}/carts/${currentUser.id}/`)
@@ -165,11 +169,9 @@ export default function CartPage({ cart, setCart }) {
             <label htmlFor='address'>Shipping Address: </label>
             <select name='address' value={addressID} onChange={(e) => { setAddressID(e.target.value) }}>
               <option disabled>Please Choose an Address</option>
-              {currentUserAddress?.map((addressObj) => {
+              {currentUserAddress?.map((addressObj,i) => {
                 return (
-                  <>
-                    <option id={addressObj?.id} value={addressObj?.id}>{addressObj.shipping_address}</option>
-                  </>
+                    <option key={i} id={addressObj?.id} value={addressObj?.id}>{addressObj.shipping_address}</option>
                 )
               })}
             </select>
