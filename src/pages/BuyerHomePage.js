@@ -43,16 +43,16 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
   const [status, setStatus] = useState()
 
     const fetchAPI = async () => {
-        const config={
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json',
-              },
-            }
+        // const config={
+        //     headers: {
+        //         'Access-Control-Allow-Origin': '*',
+        //         'Content-Type': 'application/json',
+        //       },
+        //     }
         try {
             setStatus('loading')
-            const fetchedProducts = await axios.get(`${API}/products/`,config)
-            const fetchedCategories = await axios.get(`${API}/categories/`,config)
+            const fetchedProducts = await axios.get(`${API}/products/`)
+            const fetchedCategories = await axios.get(`${API}/categories/`)
             const displayedProducts = fetchedProducts.data.filter(product => product.status === 'active' && product.stock > 0)
             setProducts(displayedProducts)
             setFilteredProducts(displayedProducts)
