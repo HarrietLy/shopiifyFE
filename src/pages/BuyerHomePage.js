@@ -49,7 +49,6 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
                 'Content-Type': 'application/json',
               },
             }
-        }
         try {
             setStatus('loading')
             const fetchedProducts = await axios.get(`${API}/products/`,config)
