@@ -185,8 +185,8 @@ export default function AdminProductsPage() {
                             <input type='number' id='stock' name='stock' min='0' value={stock} onChange={(e) => { setStock(e.target.value) }}></input>
                         </li>
                     </ul>
-                    <button type='button' onClick={handleBack}>Cancel</button>
-                    <button type='submit' >{productID ? 'Update' : 'Create'}</button>
+                    <button className="btn-sm btn-primary" type='button' onClick={handleBack}>Cancel</button>
+                    <button className="btn-sm btn-primary" type='submit' >{productID ? 'Update' : 'Create'}</button>
                 </form>
             }
 
@@ -222,11 +222,11 @@ export default function AdminProductsPage() {
                                 <td>{dayjs(product.created_time).format('DD-MMM-YYYY')}</td>
                                 <td>{product.status}</td>
                                 <td>
-                                    <button className="btn btn-primary" onClick={() => openModal(product)}>Edit</button>
-                                    <button className="btn btn-secondary" onClick={() => handleDeleteProduct(product)}>Delete</button>
+                                    <button className="btn-sm btn-primary" onClick={() => openModal(product)}>Edit</button>
+                                    <button className="btn-sm btn-secondary" onClick={() => handleDeleteProduct(product)}>Delete</button>
                                     {(product.status === 'active')
-                                        ? <button className="btn btn-info" onClick={() => handleDeactivate(product)}>Deactivate</button>
-                                        : <button className="btn btn-info" onClick={() => handleActivate(product)}>Activate</button>}
+                                        ? <button className="btn-sm btn-info" onClick={() => handleDeactivate(product)}>Deactivate</button>
+                                        : <button className="btn-sm btn-info" onClick={() => handleActivate(product)}>Activate</button>}
                                 </td>
                             </tr>
 
