@@ -4,6 +4,7 @@ import { UserContext } from '../App'
 import axios from "axios"
 import AddtoCartBtn from "../components/AddtoCartBtn"
 import { useNavigate, Link } from 'react-router-dom'
+import Loading from "../components/Loading"
 
 export default function CartPage({ cart, setCart }) {
 
@@ -13,6 +14,8 @@ export default function CartPage({ cart, setCart }) {
   const [basketVal, setBasketVal] = useState(0)
   const [currentUserAddress, setCurrentUserAddress] = useState()
   const [addressID, setAddressID] = useState()
+  const [status, setStatus] = useState()
+
   const navigate = useNavigate()
 
   const fetchedAddressDetails = async () => {
@@ -22,21 +25,29 @@ export default function CartPage({ cart, setCart }) {
   }
 
   const fetchCart = async () => {
-    const fetchedCart = await axios.get(`${API}/carts/${currentUser.id}/`)
-    const fetchedCartData = fetchedCart.data
-    for (let i = 0; i < fetchedCartData?.length; i++) {
-      let cartItemProductID = fetchedCartData[i].product
-      console.log('cartItemProductID', cartItemProductID)
-      let fetchedCartItem = await axios.get(`${API}/products/${cartItemProductID}/`)
-      console.log('fetchedCartItem data', fetchedCartItem.data)
-      fetchedCartData[i].name = fetchedCartItem.data.name
-      fetchedCartData[i].price = fetchedCartItem.data.price
-      fetchedCartData[i].units = fetchedCartItem.data.units
-      fetchedCartData[i].image = fetchedCartItem.data.image
+    try {
+      setStatus('loading')
+      const fetchedCart = await axios.get(`${API}/carts/${currentUser.id}/`)
+      const fetchedCartData = fetchedCart.data
+      for (let i = 0; i < fetchedCartData?.length; i++) {
+        let cartItemProductID = fetchedCartData[i].product
+        // console.log('cartItemProductID', cartItemProductID)
+        let fetchedCartItem = await axios.get(`${API}/products/${cartItemProductID}/`)
+        // console.log('fetchedCartItem data', fetchedCartItem.data)
+        fetchedCartData[i].name = fetchedCartItem.data.name
+        fetchedCartData[i].price = fetchedCartItem.data.price
+        fetchedCartData[i].units = fetchedCartItem.data.units
+        fetchedCartData[i].image = fetchedCartItem.data.image
+      }
+      console.log('fetchedCartData', fetchedCartData)
+      setCartDetails(fetchedCartData)//to left the cart state up to global
+      setBasketVal(fetchedCartData.reduce((prev, curr) => prev + parseFloat(curr.price) * parseFloat(curr.quantity), 0))
+      setStatus('success')
+    } catch (error) {
+      console.log(error)
+      setStatus('error')
     }
-    console.log('fetchedCartData', fetchedCartData)
-    setCartDetails(fetchedCartData)//to left the cart state up to global
-    setBasketVal(fetchedCartData.reduce((prev, curr) => prev + parseFloat(curr.price) * parseFloat(curr.quantity), 0))
+
   }
 
   useEffect(() => {
@@ -58,13 +69,13 @@ export default function CartPage({ cart, setCart }) {
       return
     }
     try {
-      console.log("addressID", addressID)
+      // console.log("addressID", addressID)
       const createdOrder = await axios.post(`${API}/orders/`, { user: currentUser.id, shipping_address: parseInt(addressID) })
-      console.log("createdOrder", createdOrder.data)
+      // console.log("createdOrder", createdOrder.data)
       try {
-        console.log("cartDetails", cartDetails)
+        // console.log("cartDetails", cartDetails)
         for (let i = 0; i < cartDetails?.length; i++) {
-          console.log("cartItem", cartDetails[i])
+          // console.log("cartItem", cartDetails[i])
           let cartItem = cartDetails[i]
           let newOrderItem = {
             product: parseInt(cartItem.product),
@@ -74,7 +85,7 @@ export default function CartPage({ cart, setCart }) {
           }
           // console.log('newOrderItem', newOrderItem)
           const createdOrderItem = await axios.post(`${API}/orderitems/${createdOrder.data.id}/`, newOrderItem)
-          console.log("createdOrderItem", createdOrderItem)
+          // console.log("createdOrderItem", createdOrderItem)
 
           //TODO: reduce the stock put to product table
           const fetchedItem = await axios.get(`${API}/products/${cartItem.product}/`)
@@ -99,7 +110,8 @@ export default function CartPage({ cart, setCart }) {
 
   return (
     <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
-      {cartDetails?.length === 0 ? <h2>Your Cart is Empty</h2>
+       {(status==='loading')&& <Loading/>}
+      {(cartDetails?.length === 0 &&(status==='success'))? <h2>Your Cart is Empty</h2>
         :
         <div>
           <h2>Here is your Cart:</h2>
@@ -176,7 +188,7 @@ export default function CartPage({ cart, setCart }) {
               })}
             </select>
           </div>
-          {( currentUserAddress.length===0 && <p style={{ color: 'red' }}>please add a shipping address in My Account section</p>)}
+          {( currentUserAddress?.length===0 && <p style={{ color: 'red' }}>please add a shipping address in My Account section</p>)}
           <br /><br />
           <button className='btn-sm btn-primary' style={{ float: 'right' }} onClick={handleOrder}>Pay and Place Order</button>
         </div>

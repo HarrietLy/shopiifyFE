@@ -3,25 +3,33 @@ import { Link } from "react-router-dom"
 import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../App'
 import dayjs from "dayjs"
+import Loading from "../components/Loading"
 
 export default function AdminUsersPage() {
   const API = process.env.REACT_APP_API
   const { currentUser } = useContext(UserContext)
   const [users, setUsers] =useState()
+  const [status, setStatus] = useState()
 
   const fetchUsers=async()=>{
-    //TODO: fetche user
-    const fetchedUsers = await axios.get(`${API}/users/`)
-    const customers = fetchedUsers.data.filter(x=>!x.is_superuser)
-    for (let i=0;i< customers?.length;i++){
-      console.log("id",customers[i]?.id)
-      let orders = await axios.get(`${API}/orders/byuser/${customers[i]?.id}/`)
-      console.log('orders',orders.data)
-      customers[i].pending_orders = (orders.data.filter(x=>x.order_status==='pending')).length
-      customers[i].delivered_orders = orders.data.length
+    try {
+      setStatus('loading')
+      const fetchedUsers = await axios.get(`${API}/users/`)
+      const customers = fetchedUsers.data.filter(x=>!x.is_superuser)
+      for (let i=0;i< customers?.length;i++){
+        console.log("id",customers[i]?.id)
+        let orders = await axios.get(`${API}/orders/byuser/${customers[i]?.id}/`)
+        console.log('orders',orders.data)
+        customers[i].pending_orders = (orders.data.filter(x=>x.order_status==='pending')).length
+        customers[i].delivered_orders = (orders.data.filter(x=>x.order_status==='delivered')).length
+      }
+      console.log('customers',customers)
+      setUsers(customers)
+      setStatus('success')
+    } catch (error) {
+      console.log(error)
+      setStatus('error')
     }
-    console.log('customers',customers)
-    setUsers(customers)
   }
 
   useEffect(()=>{
@@ -32,7 +40,7 @@ export default function AdminUsersPage() {
 
   return (
     <div style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
-      
+            {(status==='loading')&& <Loading/>}
        <table className="table">
         <thead>
           <tr>

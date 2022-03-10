@@ -2,9 +2,12 @@ import { useEffect, useState } from "react"
 import AddtoCartBtn from "../components/AddtoCartBtn"
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Loading from "../components/Loading"
 
 
 const Card = ({ product, cart, setCart }) => {
+
+
     return (
         <>
             <div className="col-6 col-md-3 col-lg-2">
@@ -37,15 +40,23 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
     const [categories, setCategories] = useState()
     const [searchCat, setSearchCat] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
+  const [status, setStatus] = useState()
 
     const fetchAPI = async () => {
-        const fetchedProducts = await axios.get(`${API}/products/`)
-        const fetchedCategories = await axios.get(`${API}/categories/`)
-        const displayedProducts = fetchedProducts.data.filter(product => product.status === 'active' && product.stock > 0)
-        setProducts(displayedProducts)
-        setFilteredProducts(displayedProducts)
-        console.log('displayedProducts', displayedProducts)
-        setCategories(fetchedCategories.data)
+        try {
+            setStatus('loading')
+            const fetchedProducts = await axios.get(`${API}/products/`)
+            const fetchedCategories = await axios.get(`${API}/categories/`)
+            const displayedProducts = fetchedProducts.data.filter(product => product.status === 'active' && product.stock > 0)
+            setProducts(displayedProducts)
+            setFilteredProducts(displayedProducts)
+            console.log('displayedProducts', displayedProducts)
+            setCategories(fetchedCategories.data)
+            setStatus('success')
+        } catch (error) {
+            setStatus('error')
+        }
+
     }
 
     useEffect(() => {
@@ -68,7 +79,7 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
     return (
         <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
             <h2> Welcome to Shopiify!</h2>
-
+            
             <div style={{ padding: "15px", margin: "auto", maxWidth: "50vw" }}>
                 <select onChange={(e) => setSearchCat(e.target.value)} value={searchCat}>
                     <option>All Categories</option>
@@ -87,7 +98,7 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
                 ></input>
                 <button className="btn btn-primary" onClick={() => handleSearch(searchCat, searchQuery)}>Search</button>
             </div>
-
+            {(status==='loading')&& <Loading/>}
             <div className='container'>
                 <div className='row g-3'>
                     {filteredProducts.map((product, i) =>

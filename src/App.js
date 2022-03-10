@@ -22,7 +22,7 @@ function App() {
   const API = process.env.REACT_APP_API
   const [currentUser, setCurrentUser] = useState('')
   const [cart, setCart] = useState()
-  // const [cartQty, setCartQty] = useState()
+
 
   return (
     <div>

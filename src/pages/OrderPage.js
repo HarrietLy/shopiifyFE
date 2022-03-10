@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../App'
 import dayjs from "dayjs"
+import Loading from "../components/Loading"
 
 export default function OrderPage() {
 
@@ -14,32 +15,42 @@ export default function OrderPage() {
   const [address, setAddress] =useState()
   const [customer, setCustomer] =useState()
   const [basketVal, setBasketVal] =useState()
+  const [status, setStatus] = useState()
 
   const fetchOrderItems=async()=>{
-    const fetchedOrderItems = await axios.get(`${API}/orderitems/${orderID}/`)
-    console.log('fetchedOrderItems',fetchedOrderItems.data)
-    let orderItems = fetchedOrderItems.data
-    for (let i=0;i<orderItems?.length;i++){
-      const itemDetails = await axios.get(`${API}/products/${orderItems?.[i]?.product}/`)
-      orderItems[i].name = itemDetails.data.name
-      orderItems[i].image = itemDetails.data.image
-      orderItems[i].units = itemDetails.data.units
+    try {
+      setStatus('loading')
+      const fetchedOrderItems = await axios.get(`${API}/orderitems/${orderID}/`)
+      // console.log('fetchedOrderItems',fetchedOrderItems.data)
+      let orderItems = fetchedOrderItems.data
+      for (let i=0;i<orderItems?.length;i++){
+        const itemDetails = await axios.get(`${API}/products/${orderItems?.[i]?.product}/`)
+        orderItems[i].name = itemDetails.data.name
+        orderItems[i].image = itemDetails.data.image
+        orderItems[i].units = itemDetails.data.units
+      }
+      // console.log("orderItems",orderItems)
+      setOrderItemDetails(orderItems)
+      setBasketVal(orderItems.reduce((prev, curr) => prev + parseFloat(curr.price) * parseFloat(curr.quantity), 0))
+  
+      const fetchedOrder = await axios.get(`${API}/orders/${orderID}/`)
+      // console.log("fetchedOrder",fetchedOrder.data)
+      setOrder(fetchedOrder.data)
+  
+      if (fetchedOrder?.data?.shipping_address){// check if there is any shipping address (if address is deleted by user, order will show null shipping address)
+        const fetchedAddress = await axios.get(`${API}/addresses/${fetchedOrder?.data?.shipping_address}/`)
+        // console.log("fetchedAddress",fetchedAddress.data)
+        setAddress(fetchedAddress.data?.shipping_address)
+      }
+      const fetchedUser = await axios.get(`${API}/users/byid/${fetchedOrder?.data?.user}/`)
+      // console.log("fetchedUser",fetchedUser.data)
+      setCustomer(fetchedUser.data)
+      setStatus('success')
+    } catch (error) {
+      console.log(error)
+      setStatus('error')
     }
-    console.log("orderItems",orderItems)
-    setOrderItemDetails(orderItems)
-    setBasketVal(orderItems.reduce((prev, curr) => prev + parseFloat(curr.price) * parseFloat(curr.quantity), 0))
 
-    const fetchedOrder = await axios.get(`${API}/orders/${orderID}/`)
-    console.log("fetchedOrder",fetchedOrder.data)
-    setOrder(fetchedOrder.data)
-
-    const fetchedAddress = await axios.get(`${API}/addresses/${fetchedOrder?.data?.shipping_address}/`)
-    console.log("fetchedAddress",fetchedAddress.data)
-    setAddress(fetchedAddress.data?.shipping_address)
-
-    const fetchedUser = await axios.get(`${API}/users/byid/${fetchedOrder?.data?.user}/`)
-    console.log("fetchedUser",fetchedUser.data)
-    setCustomer(fetchedUser.data)
   }
 
   useEffect(()=>{
@@ -56,6 +67,7 @@ export default function OrderPage() {
   return (
     <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <h5>Order Details of OrderID {orderID}</h5>
+      {(status==='loading')&& <Loading/>}
       <div>
         Customer Name: {customer?.username}
       </div>

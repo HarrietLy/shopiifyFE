@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { useEffect, useContext, useState } from 'react'
 import { UserContext } from '../App'
 import dayjs from "dayjs"
-
+import Loading from "../components/Loading"
 
 
 export default function BuyerOrderPage() {
@@ -12,15 +12,24 @@ export default function BuyerOrderPage() {
   const { currentUser } = useContext(UserContext)
   const [orders, setOrders] =useState()
   const [currentUserAddress, setCurrentUserAddress] = useState()
+  const [status, setStatus] = useState()
 
   const fetchOrders=async()=>{
-    const fetchedOrders = await axios.get(`${API}/orders/byuser/${currentUser.id}/`)
-    console.log('fetchedOrders',fetchedOrders.data)
-    setOrders(fetchedOrders.data)
+    try {
+      setStatus('loading')
+      const fetchedOrders = await axios.get(`${API}/orders/byuser/${currentUser.id}/`)
+      console.log('fetchedOrders',fetchedOrders.data)
+      setOrders(fetchedOrders.data)
+  
+      const fetchedAddress = await axios.get(`${API}/addresses/byuser/${currentUser.id}/`)
+      setCurrentUserAddress(fetchedAddress.data)
+      console.log("fetchedAddress",fetchedAddress.data) 
+      setStatus('success')
+    } catch (error) {
+      console.log(error)
+      setStatus('error')
+    }
 
-    const fetchedAddress = await axios.get(`${API}/addresses/byuser/${currentUser.id}/`)
-    setCurrentUserAddress(fetchedAddress.data)
-    console.log("fetchedAddress",fetchedAddress.data) 
   }
 
 
@@ -40,6 +49,7 @@ export default function BuyerOrderPage() {
   return (
     <div style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <h5>Hi {currentUser.username}, below is your order history:</h5>
+      {(status==='loading')&& <Loading/>}
       <table className="table">
         <thead>
           <tr>
@@ -50,6 +60,7 @@ export default function BuyerOrderPage() {
             <th></th>
           </tr>
         </thead>
+    
         <tbody>
           {orders?.map((order, i)=>{
             return (

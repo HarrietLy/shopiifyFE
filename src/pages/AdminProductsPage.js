@@ -3,15 +3,13 @@ import { UserContext } from '../App'
 import axios from "axios";
 import dayjs from 'dayjs'
 import { Link } from "react-router-dom";
-
+import Loading from "../components/Loading"
 
 
 export default function AdminProductsPage() {
 
     const API = process.env.REACT_APP_API
     const { currentUser } = useContext(UserContext)
-    console.log(process.env.REACT_APP_API)
-    console.log(process.env.NODE_ENV)
 
     const [adminProducts, setAdminProducts] = useState([])
     const [categories, setCategories] = useState()
@@ -24,35 +22,42 @@ export default function AdminProductsPage() {
     const [price, setPrice] = useState()
     const [stock, setStock] = useState()
     const [modalOn, setModalOn] = useState(false)
+    const [status, setStatus]  =useState()
 
     const fetchAPI = async () => {
-        const fetchedProducts = await axios.get(`${API}/products/`)
-        const fetchedCategories = await axios.get(`${API}/categories/`)
-        console.log("fetchedProducts", fetchedProducts)
-        console.log("fetchedCategories", fetchedCategories)
-        setAdminProducts(fetchedProducts.data)
-        setCategories(fetchedCategories.data)
+        try {
+            setStatus('loading')
+            const fetchedProducts = await axios.get(`${API}/products/`)
+            const fetchedCategories = await axios.get(`${API}/categories/`)
+            console.log("fetchedProducts", fetchedProducts)
+            console.log("fetchedCategories", fetchedCategories)
+            setAdminProducts(fetchedProducts.data)
+            setCategories(fetchedCategories.data)
+            setStatus('success')
+        } catch (error) {
+            setStatus('error')
+        }
+
     }
 
     useEffect(() => {
         if(currentUser.is_superuser){
         fetchAPI()
         }
-    }, [])
+    }, [currentUser])
 
     const handleDeleteProduct = async (product) => {
-        console.log('handleDeleteProduct product', product)
+        // console.log('handleDeleteProduct product', product)
         try {
             await axios.delete(`${API}/products/${product.id}/`)
             fetchAPI()
         } catch (error) {
             console.log(error)
         }
-
     }
 
     const handleDeactivate = async (product) => {
-        console.log('handleDeactivate arg product', product)
+        // console.log('handleDeactivate arg product', product)
         try {
             const updatedProduct = await axios.put(`${API}/products/${product.id}/`, { ...product, status: 'inactive' })
             console.log('updatedProduct', updatedProduct)
@@ -185,6 +190,7 @@ export default function AdminProductsPage() {
                 </form>
             }
 
+{(status==='loading')&& <Loading/>}
             <table style={{ 'width': "100%" }}>
                 <thead>
                     <tr>
