@@ -69,10 +69,10 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
         fetchAPI()
     }, [])
 
-    const Shuffle =(o)=> {
-        for(let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-        return o;
-    };
+    // const Shuffle =(o)=> {
+    //     for(let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    //     return o;
+    // };
 
     const handleSearch = (searchCat, searchQuery) => {
         console.log('searchCat', searchCat)
@@ -112,7 +112,7 @@ export default function BuyerHomePage({cart, setCart,setCartQty}) {
             {(status==='loading')&& <Loading/>}
             <div className='container'>
                 <div className='row g-3'>
-                    {Shuffle(filteredProducts).map((product, i) =>
+                    {filteredProducts.map((product, i) =>
                         <Card key={i} product={product} cart={cart} setCart={setCart} />
                     )}
                 </div>
