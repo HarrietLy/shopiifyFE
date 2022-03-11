@@ -31,11 +31,12 @@ function Navbar({ cart, setCart, cartQty, setCartQty }) {
 
     return (
         <>
-            <div className="container">
+            <div className="container" style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
                 <nav className="navbar navbar-expand-sm narbar-light">
                     <Link className="navbar-brand" to='/'>
-                        <img src='/shopiify_icon.png' alt='icon' style={{ width: '50px' }} />
+                        
                         Shopiify
+                        <img src='/shopiify_icon.png' alt='icon' style={{ width: '70px' }} />
                     </Link>
                     <ul className="navbar-nav ms-auto text-left">
                         <li>

@@ -174,7 +174,7 @@ export default function AdminProductsPage() {
                         <label className="form-label" htmlFor='image'>Image</label>
                         <input className="form-control" type='text' size="70" id='image' name='image' required value={image} onChange={(e) => { setImage(e.target.value) }}></input>
                     </div>
-                    <div class="row g-3">
+                    <div className="row g-3">
                         <div className="col-sm-1">
                             <label className="form-label" htmlFor='price'>Price</label>
                             <input className="form-control" type='number' id='name' name='price' min='0' step=".01" required value={price} onChange={(e) => { setPrice(e.target.value) }}></input>
