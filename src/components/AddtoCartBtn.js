@@ -11,7 +11,7 @@ export default function AddtoCartBtn({ productID, cart, setCart }) {
     const fetchAPI = async (productID, currentUser) => {
         try {
             const fetchedCartItem = await axios.get(`${API}/carts/${currentUser.id}/${productID}/`)
-            console.log('fetchedCartItem', fetchedCartItem.data)
+            // console.log('fetchedCartItem', fetchedCartItem.data)
             setQtyInCart(fetchedCartItem?.data?.[0]?.quantity)
         } catch (error) {
             console.log(error)

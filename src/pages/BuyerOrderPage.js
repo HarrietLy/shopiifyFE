@@ -50,8 +50,8 @@ export default function BuyerOrderPage() {
     <div style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       <h5>Hi {currentUser.username}, below is your order history:</h5>
       {(status==='loading')&& <Loading/>}
-      <table className="table">
-        <thead>
+      <table className="table table-hover" >
+        <thead className="table-dark">
           <tr>
             <th>Order ID</th>
             <th>Shipping_address</th>
@@ -64,7 +64,7 @@ export default function BuyerOrderPage() {
         <tbody>
           {orders?.map((order, i)=>{
             return (
-              <tr key={i}>
+              <tr key={i} className={(order.order_status==='pending')&&"table-warning"}>
                 <td><Link to={`/orders/${order.id}`}>{order.id}</Link></td>
                 <td>
                    {currentUserAddress?.filter((x)=>parseInt(x.id)===parseInt(order.shipping_address))?.[0]?.shipping_address}

@@ -107,6 +107,7 @@ export default function AdminProductsPage() {
             try {
                 const createdProduct = await axios.post(`${API}/products/`, newProduct)
                 console.log("createdProduct", createdProduct)
+                alert('product created')
                 fetchAPI()
                 handleBack()
             } catch (error) {
@@ -118,6 +119,7 @@ export default function AdminProductsPage() {
                 console.log('productID', productID)
                 const updatedProduct = await axios.put(`${API}/products/${productID}/`, newProduct)
                 console.log('updatedProduct', updatedProduct)
+                alert('product updated')
                 fetchAPI() //refresh product table
                 handleBack()
             } catch (error) {
@@ -137,6 +139,7 @@ export default function AdminProductsPage() {
         setUnits(product.units)
         setPrice(product.price)
         setStock(product.stock)
+        window.scrollTo({top: 0, behavior: 'smooth'})
     }
 
     return (
@@ -145,15 +148,13 @@ export default function AdminProductsPage() {
             <button className="btn btn-primary" onClick={() => { openModal({ name: '', category: '', description: '', image: '', price: '', units: '', stock: '' }) }}>Create New Product</button>
             {modalOn &&
                 <form onSubmit={handleSubmit}>
-                    <ul>
-                        <li>
-                            <label htmlFor='name'>Name</label>
-                            <input type='text' id='name' name='name' value={name} onChange={(e) => { setName(e.target.value) }}></input>
-                        </li>
-                        <li>
-                            <label htmlFor='category'>Category</label>
-
-                            <select id='category' value={category} onChange={(e) => { setCategory(e.target.value) }} >
+                        <div className="col-sm-6">
+                            <label className="form-label" htmlFor='name'>Name</label>
+                            <input className="form-control" type='text' id='name' name='name' required value={name} onChange={(e) => { setName(e.target.value) }}></input>
+                        </div>
+                        <div className="col-sm-6">
+                            <label className="form-label" htmlFor='category'>Category</label>
+                            <select className="form-select" id='category' value={category} onChange={(e) => { setCategory(e.target.value) }} >
                                 <option>Choose a category</option>
                                 {
                                     categories.map((category, i) => {
@@ -163,36 +164,38 @@ export default function AdminProductsPage() {
                                     })
                                 }
                             </select>
-                        </li>
-                        <li>
-                            <label htmlFor='description'>Description</label>
-                            <textarea id='description' name='description' rows='6' cols='50' value={description} onChange={(e) => { setDescription(e.target.value) }}></textarea>
-                        </li>
-                        <li>
-                            <label htmlFor='image'>Image</label>
-                            <input type='text' size="70" id='image' name='image' value={image} onChange={(e) => { setImage(e.target.value) }}></input>
-                        </li>
-                        <li>
-                            <label htmlFor='price'>Price</label>
-                            <input type='number' id='name' name='price' min='0' step=".01" value={price} onChange={(e) => { setPrice(e.target.value) }}></input>
-                        </li>
-                        <li>
-                            <label htmlFor='units'>Units</label>
-                            <input type='text' id='units' name='units' value={units} onChange={(e) => { setUnits(e.target.value) }}></input>
-                        </li>
-                        <li>
-                            <label htmlFor='stock'>Stock</label>
-                            <input type='number' id='stock' name='stock' min='0' value={stock} onChange={(e) => { setStock(e.target.value) }}></input>
-                        </li>
-                    </ul>
-                    <button className="btn-sm btn-primary" type='button' onClick={handleBack}>Cancel</button>
-                    <button className="btn-sm btn-primary" type='submit' >{productID ? 'Update' : 'Create'}</button>
+                        </div>
+                        <div className="col-sm-6">
+                            <label className="form-label" htmlFor='description'>Description</label>
+                            <textarea className="form-control" id='description' name='description' rows='6' cols='50' required value={description} onChange={(e) => { setDescription(e.target.value) }}></textarea>
+                        </div>
+                        <div className="col-sm-6">
+                            <label className="form-label" htmlFor='image'>Image</label>
+                            <input className="form-control" type='text' size="70" id='image' name='image' required value={image} onChange={(e) => { setImage(e.target.value) }}></input>
+                        </div>
+                        <div class="row g-3">
+                        <div className="col-sm-1">
+                            <label className="form-label" htmlFor='price'>Price</label>
+                            <input className="form-control" type='number' id='name' name='price' min='0' step=".01" required value={price} onChange={(e) => { setPrice(e.target.value) }}></input>
+                        </div>
+                        <div className="col-sm-2">
+                            <label className="form-label" htmlFor='units'>Units</label>
+                            <input className="form-control" type='text' id='units' name='units' required value={units} onChange={(e) => { setUnits(e.target.value) }}></input>
+                        </div>
+                        </div>
+                        <div className="col-sm-1">
+                            <label className="form-label" htmlFor='stock'>Stock</label>
+                            <input className="form-control" type='number' id='stock' name='stock' min='0' required value={stock} onChange={(e) => { setStock(e.target.value) }}></input>
+                        </div>
+                    <br/>
+                    <button className="btn btn-primary" type='button' onClick={handleBack}>Cancel</button>{' '}
+                    <button className="btn btn-primary" type='submit' >{productID ? 'Update' : 'Create'}</button>
                 </form>
-            }
+                }
 
 {(status==='loading')&& <Loading/>}
             <table style={{ 'width': "100%" }}>
-                <thead>
+                <thead >
                     <tr>
                         <th>Product ID</th>
                         <th>Name</th>
