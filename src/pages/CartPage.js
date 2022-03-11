@@ -69,6 +69,7 @@ export default function CartPage({ cart, setCart }) {
       return
     }
     try {
+      setStatus('loading')
       // console.log("addressID", addressID)
       const createdOrder = await axios.post(`${API}/orders/`, { user: currentUser.id, shipping_address: parseInt(addressID) })
       // console.log("createdOrder", createdOrder.data)
@@ -94,27 +95,31 @@ export default function CartPage({ cart, setCart }) {
           })
 
         }
+        setStatus('success')
         alert("order created")
+        
         await axios.delete(`${API}/carts/${currentUser.id}/`)
         setCart()
         navigate(`/orders/${createdOrder.data.id}`)
       } catch (error) {
         console.log(error)
+        setStatus('error')
         alert('Fail to place order')
       }
     } catch (error) {
       console.log(error)
+      setStatus('error')
       alert('Fail to place order')
     }
   }
 
   return (
     <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
-       {(status==='loading')&& <Loading/>}
+       
       {(cartDetails?.length === 0 &&(status==='success'))? <h2>Your Cart is Empty</h2>
         :
         <div>
-          <h2>Here is your Cart:</h2>
+          <h2>Here is your Cart:<span>{(status==='loading')&& <Loading/>}</span></h2>
           <table style={{ 'width': "100%" }} className="table" >
             <thead>
               <tr>

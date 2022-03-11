@@ -81,12 +81,19 @@ export default function AccountPage() {
           <button className='btn-sm btn-info' onClick={() => { openModal() }}> Add a New Address</button>
           {modalOn &&
             <>
+            
               <form onSubmit={handleSubmitCreate}>
-                <label htmlFor='address'>Address:</label>
-                <textarea type="text" name='address' cols='40' value={address} onChange={(e) => setAddress(e.target.value)} />
+              <div className="col-sm-6">
+                <label className="form-label" htmlFor='address'>Address:</label>
+                <textarea className="form-control" type="text" name='address' cols='40' value={address} onChange={(e) => setAddress(e.target.value)} />
+                <br/>
                 <input type='submit' className='btn-sm btn-warning' value='Create' />
+    
                 <button type='button' onClick={handleBack} className="btn-sm btn-light">Cancel</button>
-              </form>
+                </div>
+                
+                </form>
+              
               <br />
             </>
           }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import AddtoCartBtn from '../components/AddtoCartBtn'
-
+import Loading from "../components/Loading"
 export default function ProductViewPage({cart, setCart}) {
 
   const API = process.env.REACT_APP_API
@@ -10,15 +10,19 @@ export default function ProductViewPage({cart, setCart}) {
   const [product, setProduct] = useState()
   const [categories, setCategories] = useState()
   const { productID } = useParams()
+  const [status, setStatus] = useState()
 
   const fetchAPI = async (productID) => {
     try {
+      setStatus('loading')
       const fetchedProduct = await axios.get(`${API}/products/${productID}/`)
       const fetchedCategories = await axios.get(`${API}/categories/`)
       setProduct(fetchedProduct.data)
       setCategories(fetchedCategories.data)
+      setStatus('success')
     } catch (error) {
       console.log(error)
+      setStatus('error')
     }
   }
 
@@ -28,6 +32,7 @@ export default function ProductViewPage({cart, setCart}) {
 
   return (
     <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
+      {(status==='loading')&& <Loading/>}
       <img src={product?.image} alt='' style={{ width: '50%' }} />
       <div>
       <AddtoCartBtn productID={productID} setCart={setCart} cart={cart}/>
