@@ -1,4 +1,4 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { UserContext } from '../App'
 import axios from "axios";
 import dayjs from 'dayjs'
@@ -22,7 +22,7 @@ export default function AdminProductsPage() {
     const [price, setPrice] = useState()
     const [stock, setStock] = useState()
     const [modalOn, setModalOn] = useState(false)
-    const [status, setStatus]  =useState()
+    const [status, setStatus] = useState()
 
     const fetchAPI = async () => {
         try {
@@ -41,8 +41,8 @@ export default function AdminProductsPage() {
     }
 
     useEffect(() => {
-        if(currentUser.is_superuser){
-        fetchAPI()
+        if (currentUser.is_superuser) {
+            fetchAPI()
         }
     }, [currentUser])
 
@@ -139,41 +139,42 @@ export default function AdminProductsPage() {
         setUnits(product.units)
         setPrice(product.price)
         setStock(product.stock)
-        window.scrollTo({top: 0, behavior: 'smooth'})
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     return (
-        <div style={{maxWidth: "90vw", padding: "15px", margin: "auto" }}>
+        <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
             <h5>Welcome Admin, below are all of your products:</h5>
             <button className="btn btn-primary" onClick={() => { openModal({ name: '', category: '', description: '', image: '', price: '', units: '', stock: '' }) }}>Create New Product</button>
+            <br/><br/>
             {modalOn &&
                 <form onSubmit={handleSubmit}>
-                        <div className="col-sm-6">
-                            <label className="form-label" htmlFor='name'>Name</label>
-                            <input className="form-control" type='text' id='name' name='name' required value={name} onChange={(e) => { setName(e.target.value) }}></input>
-                        </div>
-                        <div className="col-sm-6">
-                            <label className="form-label" htmlFor='category'>Category</label>
-                            <select className="form-select" id='category' value={category} onChange={(e) => { setCategory(e.target.value) }} >
-                                <option>Choose a category</option>
-                                {
-                                    categories.map((category, i) => {
-                                        return (
-                                            <option key={category.id} value={category.id}>{category.name}</option>
-                                        )
-                                    })
-                                }
-                            </select>
-                        </div>
-                        <div className="col-sm-6">
-                            <label className="form-label" htmlFor='description'>Description</label>
-                            <textarea className="form-control" id='description' name='description' rows='6' cols='50' required value={description} onChange={(e) => { setDescription(e.target.value) }}></textarea>
-                        </div>
-                        <div className="col-sm-6">
-                            <label className="form-label" htmlFor='image'>Image</label>
-                            <input className="form-control" type='text' size="70" id='image' name='image' required value={image} onChange={(e) => { setImage(e.target.value) }}></input>
-                        </div>
-                        <div class="row g-3">
+                    <div className="col-sm-6">
+                        <label className="form-label" htmlFor='name'>Name</label>
+                        <input className="form-control" type='text' id='name' name='name' required value={name} onChange={(e) => { setName(e.target.value) }}></input>
+                    </div>
+                    <div className="col-sm-6">
+                        <label className="form-label" htmlFor='category'>Category</label>
+                        <select className="form-select" id='category' value={category} onChange={(e) => { setCategory(e.target.value) }} >
+                            <option>Choose a category</option>
+                            {
+                                categories.map((category, i) => {
+                                    return (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    )
+                                })
+                            }
+                        </select>
+                    </div>
+                    <div className="col-sm-6">
+                        <label className="form-label" htmlFor='description'>Description</label>
+                        <textarea className="form-control" id='description' name='description' rows='6' cols='50' required value={description} onChange={(e) => { setDescription(e.target.value) }}></textarea>
+                    </div>
+                    <div className="col-sm-6">
+                        <label className="form-label" htmlFor='image'>Image</label>
+                        <input className="form-control" type='text' size="70" id='image' name='image' required value={image} onChange={(e) => { setImage(e.target.value) }}></input>
+                    </div>
+                    <div class="row g-3">
                         <div className="col-sm-1">
                             <label className="form-label" htmlFor='price'>Price</label>
                             <input className="form-control" type='number' id='name' name='price' min='0' step=".01" required value={price} onChange={(e) => { setPrice(e.target.value) }}></input>
@@ -182,20 +183,20 @@ export default function AdminProductsPage() {
                             <label className="form-label" htmlFor='units'>Units</label>
                             <input className="form-control" type='text' id='units' name='units' required value={units} onChange={(e) => { setUnits(e.target.value) }}></input>
                         </div>
-                        </div>
-                        <div className="col-sm-1">
-                            <label className="form-label" htmlFor='stock'>Stock</label>
-                            <input className="form-control" type='number' id='stock' name='stock' min='0' required value={stock} onChange={(e) => { setStock(e.target.value) }}></input>
-                        </div>
-                    <br/>
+                    </div>
+                    <div className="col-sm-1">
+                        <label className="form-label" htmlFor='stock'>Stock</label>
+                        <input className="form-control" type='number' id='stock' name='stock' min='0' required value={stock} onChange={(e) => { setStock(e.target.value) }}></input>
+                    </div>
+                    <br />
                     <button className="btn btn-primary" type='button' onClick={handleBack}>Cancel</button>{' '}
                     <button className="btn btn-primary" type='submit' >{productID ? 'Update' : 'Create'}</button>
                 </form>
-                }
-
-{(status==='loading')&& <Loading/>}
-            <table style={{ 'width': "100%" }}>
-                <thead >
+            }
+            <br /><br />
+            {(status === 'loading') && <Loading />}
+            <table className="table table-hover" style={{ 'width': "100%" }}>
+                <thead className="table-dark">
                     <tr>
                         <th>Product ID</th>
                         <th>Name</th>
