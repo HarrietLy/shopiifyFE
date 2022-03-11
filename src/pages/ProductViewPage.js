@@ -31,7 +31,7 @@ export default function ProductViewPage({cart, setCart}) {
   }, [productID])
 
   return (
-    <div style={{ maxWidth: "90vw", padding: "15px", margin: "auto" }}>
+    <div style={{  maxWidth: "90vw", padding: "15px", margin: "auto" }}>
       {(status==='loading')&& <Loading/>}
       <img src={product?.image} alt='' style={{ width: '50%' }} />
       <div>
@@ -45,7 +45,7 @@ export default function ProductViewPage({cart, setCart}) {
         <li>Units: {product?.units}</li>
         <li>Stock: {(product?.status!=='active' || product?.stock <=0) ?'Not Available' : product?.stock}</li>
       </ul>
-
+      <br/><br/><br/><br/>
     </div>
 
   )
