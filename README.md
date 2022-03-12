@@ -10,6 +10,13 @@ Test customer acc:
 username: harriet
 password: harriet123
 
+●	User can view all active grocery listings, and search for a specific product. Upon logged in, user can add various items to cart, and place order to an address. 
+●	Superuser can view all users, create/edit/deactivate products, and “ship out” pending orders
+●	Built BE and Restful APIs using Django Rest Framework, integrated with PostgresSQL database that store products, orders, orderitems, cartitems, users, categories, address tables
+
+Link to BE repo: https://github.com/HarrietLy/shopiifyBE
+
+
 PostgreSQL Database Schema
 <img
   src="./screenshots_readme/database_schema.png"
