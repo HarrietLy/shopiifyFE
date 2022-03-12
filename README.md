@@ -2,6 +2,13 @@
 
 Link to the web app:
 https://shopiify-harriet.herokuapp.com/
+Admin Acc
+username: admin
+password: adminadmin
+
+Test customer acc:
+username: harriet
+password: harriet123
 
 PostgreSQL Database Schema
 <img
