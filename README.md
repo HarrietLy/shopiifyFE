@@ -2,7 +2,7 @@
 
 PostgreSQL Database Schema
 <img
-  src="/database_schema.png"
+  src="./screenshots_readme/database_schema.png"
   alt="database"
   title="Database Schema"
   style="display: inline-block; margin: 0 auto; max-width: 200px">
