@@ -198,6 +198,13 @@ export default function CartPage({ cart, setCart }) {
           <button className='btn-sm btn-primary' style={{ float: 'right' }} onClick={handleOrder}>Pay and Place Order</button>
         </div>
       }
+
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
     </div>
   )
 }
